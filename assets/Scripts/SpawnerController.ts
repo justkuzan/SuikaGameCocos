@@ -18,6 +18,8 @@ const { ccclass, property } = _decorator;
 export class SpawnerController extends Component {
   private _tempUIVec3: Vec3 = new Vec3(0, 0, 0);
   private _tempLocalVec3: Vec3 = new Vec3(0, 0, 0);
+  private _nodePosition: Vec3 = new Vec3(0, 0, 0);
+  private _nodeWorldPosition: Vec3 = new Vec3(0, 0, 0);
 
   protected onLoad(): void {
     // input.on(Input.EventType.TOUCH_START, this.onTouchStart, this);
@@ -36,12 +38,17 @@ export class SpawnerController extends Component {
 
   upgradePosition(event: EventMouse) {
     const currentUIPosition = event.getUILocation();
-    this._tempUIVec3.set(currentUIPosition.x, currentUIPosition.y);
+    const newPosition: Vec3 = this.node.worldPosition;
+    newPosition.x = currentUIPosition.x;
+    newPosition.y = currentUIPosition.y;
 
-    this.node
-      .getComponent(UITransform)
-      .convertToNodeSpaceAR(this._tempUIVec3, this._tempLocalVec3);
-
-    this.node.setPosition(this._tempLocalVec3);
+    this.node.setWorldPosition(newPosition);
+    // this._tempUIVec3.set(currentUIPosition.x, currentUIPosition.y);
+    // // this.node.getWorldPosition(this._nodeWorldPosition);
+    // // const currentNodePosition = this.node.position
+    // this._nodeWorldPosition = this.node
+    //   .getComponent(UITransform)
+    //   .convertToNodeSpaceAR(this._tempUIVec3, this._tempLocalVec3);
+    // this.node.setPosition(this._nodeWorldPosition);
   }
 }
