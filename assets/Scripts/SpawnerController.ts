@@ -50,11 +50,8 @@ export class SpawnerController extends Component {
     this.node
       .getComponent(UITransform)
       .convertToNodeSpaceAR(this.newPosition, this.LocalVec3);
-    // this.LocalVec3.y = this.yBound;
 
     this.node.translate(this.LocalVec3);
-    // this.node.setPosition(this.LocalVec3);
-    // this.node.getPosition(this.LocalVec3);
 
     if (this.node.position.x <= this.leftBound) {
       this.node.setPosition(this.leftBound, this.yBound, 0);
@@ -63,7 +60,5 @@ export class SpawnerController extends Component {
     }
 
     this.node.setPosition(this.node.position.x, this.yBound, 0);
-
-    console.log(this.node.position);
   }
 }
