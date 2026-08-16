@@ -11,15 +11,21 @@ import {
   UITransform,
   Vec2,
   Vec3,
+  math,
 } from "cc";
 const { ccclass, property } = _decorator;
 
 @ccclass("SpawnerController")
 export class SpawnerController extends Component {
-  private _tempUIVec3: Vec3 = new Vec3(0, 0, 0);
-  private _tempLocalVec3: Vec3 = new Vec3(0, 0, 0);
-  private _nodePosition: Vec3 = new Vec3(0, 0, 0);
-  private _nodeWorldPosition: Vec3 = new Vec3(0, 0, 0);
+  @property(Number)
+  public leftBound: number = 0;
+  @property(Number)
+  public rightBound: number = 0;
+  @property(Number)
+  public yBound: number = 0;
+
+  private newPosition: Vec3 = new Vec3(0, 0, 0);
+  private LocalVec3: Vec3 = new Vec3(0, 0, 0);
 
   protected onLoad(): void {
     // input.on(Input.EventType.TOUCH_START, this.onTouchStart, this);
@@ -38,17 +44,26 @@ export class SpawnerController extends Component {
 
   upgradePosition(event: EventMouse) {
     const currentUIPosition = event.getUILocation();
-    const newPosition: Vec3 = this.node.worldPosition;
-    newPosition.x = currentUIPosition.x;
-    newPosition.y = currentUIPosition.y;
+    this.newPosition.set(currentUIPosition.x, currentUIPosition.y);
 
-    this.node.setWorldPosition(newPosition);
-    // this._tempUIVec3.set(currentUIPosition.x, currentUIPosition.y);
-    // // this.node.getWorldPosition(this._nodeWorldPosition);
-    // // const currentNodePosition = this.node.position
-    // this._nodeWorldPosition = this.node
-    //   .getComponent(UITransform)
-    //   .convertToNodeSpaceAR(this._tempUIVec3, this._tempLocalVec3);
-    // this.node.setPosition(this._nodeWorldPosition);
+    // Convert to local coordinates
+    this.node
+      .getComponent(UITransform)
+      .convertToNodeSpaceAR(this.newPosition, this.LocalVec3);
+    // this.LocalVec3.y = this.yBound;
+
+    this.node.translate(this.LocalVec3);
+    // this.node.setPosition(this.LocalVec3);
+    // this.node.getPosition(this.LocalVec3);
+
+    if (this.node.position.x <= this.leftBound) {
+      this.node.setPosition(this.leftBound, this.yBound, 0);
+    } else if (this.node.position.x >= this.rightBound) {
+      this.node.setPosition(this.rightBound, this.yBound, 0);
+    }
+
+    this.node.setPosition(this.node.position.x, this.yBound, 0);
+
+    console.log(this.node.position);
   }
 }
